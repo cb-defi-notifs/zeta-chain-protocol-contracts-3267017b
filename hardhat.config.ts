@@ -1,8 +1,9 @@
 import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-etherscan";
+import "@nomicfoundation/hardhat-verify";
 import "@typechain/hardhat";
 import "tsconfig-paths/register";
 import "hardhat-abi-exporter";
+import "./tasks/addresses";
 
 import { getHardhatConfigNetworks } from "@zetachain/networks";
 import * as dotenv from "dotenv";
@@ -10,18 +11,20 @@ import type { HardhatUserConfig } from "hardhat/types";
 
 dotenv.config();
 
-const PRIVATE_KEYS = process.env.PRIVATE_KEY !== undefined ? [`0x${process.env.PRIVATE_KEY}`] : [];
-
 const config: HardhatUserConfig = {
-  networks: {
-    ...getHardhatConfigNetworks(PRIVATE_KEYS),
-    hardhat: {
-      chainId: 1337,
-      forking: {
-        blockNumber: 14672712,
-        url: "https://rpc.ankr.com/eth",
-      },
+  //@ts-ignore
+  etherscan: {
+    apiKey: {
+      // BSC
+      bsc: process.env.BSCSCAN_API_KEY || "",
+      bscTestnet: process.env.BSCSCAN_API_KEY || "",
+      // ETH
+      goerli: process.env.ETHERSCAN_API_KEY || "",
+      mainnet: process.env.ETHERSCAN_API_KEY || "",
     },
+  },
+  networks: {
+    ...getHardhatConfigNetworks(),
   },
   solidity: {
     compilers: [
